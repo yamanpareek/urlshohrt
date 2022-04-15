@@ -72,14 +72,13 @@ button:hover {
 }
 </style>
 <script>
+
   function passwordValidation(){
   var psw = document.getElementById("psw").value;
   var rpw = document.getElementById("rpw").value;
   if (psw==rpw){
-  alert("password is correct");
   return true;
   } else{
-  alert("password is incorrect");
   return false;
   }
   }
@@ -96,10 +95,10 @@ button:hover {
     <input type="text" placeholder="Enter Email" name="email" id="email" required>
 
     <label for="psw"><b>Password</b></label>
-    <input type="password" placeholder="Enter Password" name="psw" id="psw" required>
+    <input type="password" placeholder="Enter Password" name="password" id="psw" required>
 
     <label for="rpw"><b>Repeat Password</b></label>
-    <input type="password" placeholder="Repeat Password" name="rpw" id="rpw" required>
+    <input type="password" placeholder="Repeat Password"  id="rpw" required>
 
     <label>
       <input type="checkbox" checked="checked" name="remember" style="margin-bottom:15px"> Remember me
