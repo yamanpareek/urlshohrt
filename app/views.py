@@ -1,3 +1,5 @@
+import string
+
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.db import connection
@@ -6,7 +8,7 @@ from django.core.mail import send_mail
 
 # Create your views here.
 def xyz(request):
-    return render(request,"index.html")
+    return render(request, "home.html")
 
 def signup(request):
     email = request.POST['email']
@@ -51,7 +53,6 @@ def login(request):
             return render(request, "first.html", data)
 
 def otpVarify(request):
-
     email = request.POST['email']
     otp = request.POST['otp']
     cursor = connection.cursor()
@@ -68,6 +69,46 @@ def otpVarify(request):
                 return render(request, "first.html", data)
         else:
             data = {'email': "OTP Not Verified"}
+            return render(request, "first.html", data)
+def generateShortURL(request):
+    letters = string.ascii_letters + string.digits
+    shortUrl = ' '
+    for i in range(5):
+        shortUrl = shortUrl + ''.join(random.choice(letters))
+    return shortUrl
+
+def urlshortner(request):
+    longLink = request.GET['link']
+    customUrl = request.GET["customurl"]
+    if customUrl is None or customUrl == '':
+        shortUrl = generateShortURL(request)
+    else:
+        cursor = connection.cursor()
+        query1 = "select * from links where short_link ='" + customUrl + "'"
+        cursor.execute(query1)
+        data = cursor.fetchone()
+        if data is not None:
+            data = {'email': "This URL already used try another."}
+            return render(request, "first.html", data)
+        else:
+            query2 = "insert into links (long_link, short_link) values(%s, %s)"
+            value = (longLink, customUrl)
+            cursor.execute(query2, value)
+            data = {'email': "Your url is shortne with nano.co/"+customUrl}
+            return render(request, "first.html", data)
+    if shortUrl is not None or shortUrl != '':
+        cursor = connection.cursor()
+        query1 = "select * from links where short_link ='" + shortUrl + "'"
+        cursor.execute(query1)
+        data = cursor.fetchone()
+        if data is not None:
+            data = {'email': "This URL already used try another."}
+            return render(request, "first.html", data)
+        else:
+            query2 = "insert into links (long_link, short_link) values(%s, %s)"
+            values2 = (longLink, shortUrl)
+            cursor.execute(query2, values2)
+            data = {'email': "Your url is shortne with nano.co/'"+shortUrl+"'"}
             return render(request, "first.html", data)
 
 
