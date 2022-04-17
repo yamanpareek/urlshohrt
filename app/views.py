@@ -1,7 +1,7 @@
 import string
 
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.db import connection
 import random
 from django.core.mail import send_mail
@@ -127,3 +127,10 @@ def handlingShortUrl(request, **kwargs):
         return render(request, "home.html")
     else:
         return redirect(data[0])
+
+def generateShortURLApi(request):
+    letters = string.ascii_letters + string.digits
+    shortUrl = ' '
+    for i in range(6):
+        shortUrl = shortUrl + ''.join(random.choice(letters))
+    return JsonResponse({"shortUrl": shortUrl, "respose": "succes"})
