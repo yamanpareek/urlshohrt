@@ -1,6 +1,6 @@
 import string
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.db import connection
 import random
@@ -46,8 +46,12 @@ def login(request):
         return render(request, "first.html", data)
     else:
         if data[1] == psw:
-            data = {'email': "login complete", 'password': " "}
-            return render(request, "first.html", data)
+            cursor = connection.cursor()
+            query1 = "select * from links where created_by = '" + email + "'"
+            cursor.execute(query1)
+            data = cursor.fetchall()
+            data = {"data": data}
+            return render(request, "AfterLogin.html", data)
         else:
             data = {'email': "password is wrong", 'password': " "}
             return render(request, "first.html", data)
@@ -73,7 +77,7 @@ def otpVarify(request):
 def generateShortURL(request):
     letters = string.ascii_letters + string.digits
     shortUrl = ' '
-    for i in range(5):
+    for i in range(6):
         shortUrl = shortUrl + ''.join(random.choice(letters))
     return shortUrl
 
@@ -112,3 +116,14 @@ def urlshortner(request):
             return render(request, "first.html", data)
 
 
+def handlingShortUrl(request, **kwargs):
+    url = kwargs.get('url')
+    cursor = connection.cursor()
+    query = "select long_link from links where short_link= '" + url + "'"
+    cursor.execute(query)
+    data = cursor.fetchone()
+    print(data)
+    if data is None:
+        return render(request, "home.html")
+    else:
+        return redirect(data[0])

@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from app.views import xyz,signup,signin,login,otpVarify,urlshortner
+from app.views import xyz, signup, signin, login, otpVarify, urlshortner, handlingShortUrl
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -24,5 +24,6 @@ urlpatterns = [
     path('signin/', signin),
     path('login', login),
     path('otpVarify', otpVarify),
-    path('urlshortner', urlshortner)
+    path('urlshortner', urlshortner),
+    path('<url>/', handlingShortUrl),
 ]
